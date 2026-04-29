@@ -2,28 +2,141 @@
 <html>
 <head>
 <title>McCrackTube</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
 body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#000,#fff);
-color:white;
-text-align:center;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  min-height:100vh;
+  background:#000;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,255,255,0.12), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(255,255,255,0.05), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(255,255,255,0.04), transparent 60%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  text-align:center;
+  padding-bottom:60px;
 }
-h1{margin-top:20px;}
-input{padding:10px;width:60%;}
-button{padding:10px;}
-#results{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;padding:20px;}
-.card{background:rgba(0,0,0,.7);padding:10px;border-radius:12px;cursor:pointer;}
-.card img{width:100%;}
+h1{
+  font-size:clamp(2.4rem,6vw,4rem);
+  letter-spacing:-0.02em;
+  font-weight:700;
+  padding:50px 20px 30px;
+  background:linear-gradient(180deg,#fff 0%,#a8a8a8 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 40px rgba(255,255,255,0.1);
+}
+.search-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  padding:0 20px;
+  max-width:720px;
+  margin:0 auto 40px;
+}
+#searchBox{
+  flex:1;
+  padding:16px 24px;
+  font-size:16px;
+  font-family:inherit;
+  color:#fff;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:999px;
+  outline:none;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  transition:all 0.25s ease;
+}
+#searchBox::placeholder{color:rgba(255,255,255,0.45);}
+#searchBox:focus{
+  border-color:rgba(255,255,255,0.35);
+  background:rgba(255,255,255,0.09);
+  box-shadow:0 0 0 4px rgba(255,255,255,0.05);
+}
+button{
+  padding:16px 22px;
+  font-size:18px;
+  font-family:inherit;
+  color:#000;
+  background:#fff;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.25s ease;
+  min-width:60px;
+}
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 24px rgba(255,255,255,0.15);
+}
+button:active{transform:translateY(0);}
+#player{padding:0 20px;}
+#player iframe{
+  width:min(960px,90%);
+  aspect-ratio:16/9;
+  height:auto;
+  border:none;
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  margin:10px auto 30px;
+  display:block;
+}
+#results{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+  padding:20px;
+  max-width:1400px;
+  margin:0 auto;
+}
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:10px;
+  border-radius:16px;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  text-align:left;
+  overflow:hidden;
+}
+.card:hover{
+  background:rgba(255,255,255,0.08);
+  border-color:rgba(255,255,255,0.18);
+  transform:translateY(-3px);
+}
+.card img{
+  width:100%;
+  border-radius:10px;
+  display:block;
+}
+.card p{
+  padding:10px 4px 4px;
+  font-size:14px;
+  font-weight:500;
+  color:#e8e8e8;
+  line-height:1.4;
+}
 </style>
 </head>
 <body>
 
-<h1>MCCRACKTUBE</h1>
+<h1>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube</h1>
 
-<input id="searchBox" placeholder="Search...">
-<button onclick="search()">Search</button>
+<div class="search-wrap">
+  <input id="searchBox" placeholder="Search..." onkeydown="if(event.key==='Enter')search()">
+  <button onclick="search()">🔍︎</button>
+</div>
 
 <div id="player"></div>
 <div id="results"></div>
@@ -33,27 +146,20 @@ async function search(){
  const q = document.getElementById("searchBox").value;
  const res = await fetch("/search?q=" + encodeURIComponent(q));
  const data = await res.json();
-
  const results = document.getElementById("results");
  results.innerHTML = "";
-
  data.forEach(video => {
    const div = document.createElement("div");
    div.className = "card";
-   div.innerHTML = `
-     <img src="${video.thumbnail}">
-     <p>${video.title}</p>
-   `;
+   div.innerHTML = `<img src="${video.thumbnail}"><p>${video.title}</p>`;
    div.onclick = () => play(video.id);
    results.appendChild(div);
  });
 }
-
 function play(id){
- document.getElementById("player").innerHTML = `
- <iframe width="80%" height="400"
- src="https://www.youtube.com/embed/${id}"
- allowfullscreen></iframe>`;
+ document.getElementById("player").innerHTML =
+   `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>`;
+ document.getElementById("player").scrollIntoView({behavior:'smooth'});
 }
 </script>
 
