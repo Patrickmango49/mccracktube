@@ -527,12 +527,45 @@
       await loadTrending();
     }
 
+
+    function extractYouTubeId(input) {
+      try {
+        const url = new URL(input);
+
+        // youtube.com/watch?v=VIDEO_ID
+        if (url.hostname.includes("youtube.com")) {
+          return url.searchParams.get("v");
+        }
+
+        // youtu.be/VIDEO_ID
+        if (url.hostname === "youtu.be") {
+          return url.pathname.slice(1);
+        }
+      } catch (e) {
+        // Not a valid URL → ignore
+      }
+
+      return null;
+    }
+
     async function doSearch(event) {
       event.preventDefault();
       const query = searchInput.value.trim();
       if (!query) {
         await goHome();
         return;
+      }
+
+      // 🔥 NEW: check if it's a YouTube URL
+      const videoId = extractYouTubeId(query);
+
+      if (videoId) {
+        playVideo({
+          id: videoId,
+          title: "Direct Video"
+        });
+
+        return; // stop normal search
       }
 
       hideStatus();
