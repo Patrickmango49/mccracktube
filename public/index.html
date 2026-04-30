@@ -320,9 +320,8 @@
       padding: 0;
       margin: 0;
       height: calc(100vh - 65px);
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
+      overflow: hidden;
+      position: relative;
       background: #000;
     }
 
@@ -347,21 +346,43 @@
       font-size: 14px;
     }
 
-    .shorts-feed { width: 100%; }
-
-    .short-item {
+    .shorts-feed {
       position: relative;
       width: 100%;
-      height: 100vh;
-      scroll-snap-align: start;
+      height: 100%;
+    }
+
+    .short-item {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
       background: #000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .short-item.active {
+      display: flex;
+    }
+
+    .short-video-wrap {
+      height: 100%;
+      aspect-ratio: 9 / 16;
+      max-width: 420px;
+      width: 100%;
+      background: black;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-bottom: 1px solid #161616;
     }
 
-    .short-frame { width: 100%; height: 100%; border: 0; }
+    .short-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 
     .short-overlay {
       position: absolute;
@@ -374,6 +395,26 @@
 
     .short-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
     .short-query { font-size: 13px; color: #d4d4d4; }
+
+
+    .short-nav-btn {
+      position: absolute;
+      right: 16px;
+      bottom: 80px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 12;
+    }
+
+    .short-nav-btn.up {
+      bottom: 140px;
+    }
 
     .shorts-loader { padding: 20px 16px 30px; display: grid; gap: 10px; background: #000; }
     .shorts-loader .skeleton { height: 18px; border-radius: 10px; }
@@ -447,6 +488,8 @@
         <button id="backToVideosBtn" class="shorts-back-btn" type="button">Back to Videos</button>
       </div>
       <div id="shortsFeed" class="shorts-feed"></div>
+      <button id="nextShortBtn" class="short-nav-btn" type="button" aria-label="Next short">↓</button>
+      <button id="prevShortBtn" class="short-nav-btn up" type="button" aria-label="Previous short">↑</button>
       <div id="shortsLoader" class="shorts-loader hidden" aria-live="polite">
         <div class="skeleton"></div>
         <div class="skeleton"></div>
@@ -490,7 +533,7 @@
     let shortsCursor = 0;
     let shortsLoading = false;
     let shortsModeActive = false;
-    let shortsObserver = null;
+    let currentShortIndex = 0;
     const shortsSeenIds = new Set();
 
     function showStatus(message, isError = false) {
@@ -635,8 +678,33 @@
       overlay.className = "short-overlay";
       overlay.innerHTML = `<div class="short-title">${video.title}</div><div class="short-query">From: ${video.sourceQuery}</div>`;
 
-      item.append(frame, overlay);
+      const videoWrap = document.createElement("div");
+      videoWrap.className = "short-video-wrap";
+      videoWrap.appendChild(frame);
+
+      item.append(videoWrap, overlay);
       return item;
+    }
+
+    function showShort(index) {
+      const items = shortsFeed.children;
+
+      if (!items.length) return;
+
+      if (index < 0) index = 0;
+
+      if (index >= items.length) {
+        loadMoreShorts(6);
+        return;
+      }
+
+      Array.from(items).forEach((item) => item.classList.remove("active"));
+
+      const activeItem = items[index];
+      activeItem.classList.add("active");
+
+      activateShortFrame(activeItem);
+      currentShortIndex = index;
     }
 
     async function loadMoreShorts(batchTarget = 8) {
@@ -659,17 +727,9 @@
 
         unique.forEach((video) => shortsFeed.appendChild(createShortItem(video)));
 
-        if (!shortsObserver) {
-          shortsObserver = new IntersectionObserver((entries) => {
-            const visible = entries.find((entry) => entry.isIntersecting);
-            if (visible) activateShortFrame(visible.target);
-          }, { threshold: 0.7, root: shortsSection });
+        if (shortsFeed.children.length === unique.length) {
+          showShort(0);
         }
-
-        unique.forEach((_, idx) => {
-          const item = shortsFeed.children[shortsFeed.children.length - unique.length + idx];
-          shortsObserver.observe(item);
-        });
 
       } catch (error) {
         showStatus("Could not load more Shorts right now.", true);
@@ -692,8 +752,9 @@
       if (shortsFeed.children.length === 0) {
         await loadMoreShorts(8);
       }
-      const first = shortsFeed.querySelector(".short-item");
-      if (first) activateShortFrame(first);
+      if (shortsFeed.children.length > 0) {
+        showShort(currentShortIndex);
+      }
     }
 
     function exitShortsMode() {
@@ -821,10 +882,11 @@
     document.getElementById("searchForm").addEventListener("submit", doSearch);
     shortsModeBtn.addEventListener("click", enterShortsMode);
     backToVideosBtn.addEventListener("click", exitShortsMode);
-    shortsSection.addEventListener("scroll", () => {
-      if (!shortsModeActive || shortsLoading) return;
-      const threshold = shortsSection.scrollHeight - shortsSection.clientHeight - 900;
-      if (shortsSection.scrollTop >= threshold) loadMoreShorts(6);
+    document.getElementById("nextShortBtn").addEventListener("click", () => {
+      showShort(currentShortIndex + 1);
+    });
+    document.getElementById("prevShortBtn").addEventListener("click", () => {
+      showShort(currentShortIndex - 1);
     });
     window.addEventListener("DOMContentLoaded", loadTrending);
   </script>
