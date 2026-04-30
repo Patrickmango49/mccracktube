@@ -301,6 +301,83 @@
     .skel-line.full { width: 100%; }
     .skel-line.three-q { width: 75%; }
 
+
+    .nav-btn {
+      height: 40px;
+      padding: 0 16px;
+      background: #1f1f1f;
+      border: 1px solid #343434;
+      border-radius: 999px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background .2s, border-color .2s;
+    }
+    .nav-btn:hover { background: #2a2a2a; border-color: #444; }
+
+    .shorts-mode {
+      max-width: 100%;
+      padding: 0;
+      margin: 0;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      background: #000;
+    }
+
+    .shorts-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: flex-end;
+      background: linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.1));
+    }
+
+    .shorts-back-btn {
+      height: 38px;
+      padding: 0 14px;
+      background: rgba(23,23,23,.95);
+      border: 1px solid #3a3a3a;
+      border-radius: 999px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .shorts-feed { width: 100%; }
+
+    .short-item {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      scroll-snap-align: start;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #161616;
+    }
+
+    .short-frame { width: 100%; height: 100%; border: 0; }
+
+    .short-overlay {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 24px;
+      pointer-events: none;
+      text-shadow: 0 1px 10px rgba(0,0,0,.65);
+    }
+
+    .short-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .short-query { font-size: 13px; color: #d4d4d4; }
+
+    .shorts-loader { padding: 20px 16px 30px; display: grid; gap: 10px; background: #000; }
+    .shorts-loader .skeleton { height: 18px; border-radius: 10px; }
+
     footer {
       margin-top: 56px;
       border-top: 1px solid #1a1a1a;
@@ -326,6 +403,7 @@
           </svg>
         </button>
       </form>
+      <button id="shortsModeBtn" class="nav-btn" type="button" aria-label="Open Shorts mode">Shorts</button>
     </div>
   </header>
 
@@ -363,6 +441,18 @@
     </section>
   </main>
 
+
+    <section id="shortsSection" class="shorts-mode hidden" aria-label="Shorts mode">
+      <div class="shorts-topbar">
+        <button id="backToVideosBtn" class="shorts-back-btn" type="button">Back to Videos</button>
+      </div>
+      <div id="shortsFeed" class="shorts-feed"></div>
+      <div id="shortsLoader" class="shorts-loader hidden" aria-live="polite">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </section>
+
   <footer>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube — Not affiliated with YouTube or Google.</footer>
 
   <script>
@@ -388,6 +478,20 @@
     const playerSection = document.getElementById("playerSection");
     const playerFrame = document.getElementById("playerFrame");
     const playerTitle = document.getElementById("playerTitle");
+    const shortsModeBtn = document.getElementById("shortsModeBtn");
+    const backToVideosBtn = document.getElementById("backToVideosBtn");
+    const shortsSection = document.getElementById("shortsSection");
+    const shortsFeed = document.getElementById("shortsFeed");
+    const shortsLoader = document.getElementById("shortsLoader");
+    const mainEl = document.querySelector("main");
+    const footerEl = document.querySelector("footer");
+
+    const SHORTS_QUERIES = ["youtube shorts", "viral shorts", "short funny videos", "quick clips", "meme shorts", "trending short videos"];
+    let shortsCursor = 0;
+    let shortsLoading = false;
+    let shortsModeActive = false;
+    let shortsObserver = null;
+    const shortsSeenIds = new Set();
 
     function showStatus(message, isError = false) {
       statusMessage.textContent = message;
@@ -483,6 +587,122 @@
     function setTrendingHeadings(queryUsed = "") {
       resultsLabel.textContent = "Trending Now";
       resultsSubtitle.textContent = queryUsed ? `Powered by: ${queryUsed}` : "Popular videos right now.";
+    }
+
+
+
+    function getNextShortQuerySet(batchSize = 3) {
+      const rotated = [];
+      for (let i = 0; i < batchSize; i += 1) {
+        rotated.push(SHORTS_QUERIES[(shortsCursor + i) % SHORTS_QUERIES.length]);
+      }
+      shortsCursor = (shortsCursor + batchSize) % SHORTS_QUERIES.length;
+      return shuffle(rotated);
+    }
+
+    function stopAllShortsPlayback() {
+      shortsFeed.querySelectorAll("iframe").forEach((frame) => {
+        frame.src = frame.dataset.baseSrc || frame.src;
+      });
+    }
+
+    function activateShortFrame(item) {
+      const current = item?.querySelector("iframe");
+      if (!current) return;
+      shortsFeed.querySelectorAll("iframe").forEach((frame) => {
+        if (frame === current) {
+          frame.src = `${frame.dataset.baseSrc}&autoplay=1`;
+        } else {
+          frame.src = frame.dataset.baseSrc;
+        }
+      });
+    }
+
+    function createShortItem(video) {
+      const item = document.createElement("article");
+      item.className = "short-item";
+
+      const frame = document.createElement("iframe");
+      frame.className = "short-frame";
+      frame.title = video.title;
+      frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      frame.allowFullscreen = true;
+      frame.loading = "lazy";
+      frame.dataset.baseSrc = `https://www.youtube.com/embed/${encodeURIComponent(video.id)}?mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=${encodeURIComponent(video.id)}`;
+      frame.src = frame.dataset.baseSrc;
+
+      const overlay = document.createElement("div");
+      overlay.className = "short-overlay";
+      overlay.innerHTML = `<div class="short-title">${video.title}</div><div class="short-query">From: ${video.sourceQuery}</div>`;
+
+      item.append(frame, overlay);
+      return item;
+    }
+
+    async function loadMoreShorts(batchTarget = 8) {
+      if (shortsLoading) return;
+      shortsLoading = true;
+      shortsLoader.classList.remove("hidden");
+      try {
+        const queries = getNextShortQuerySet(3);
+        const responses = await Promise.all(queries.map(async (query) => ({ query, videos: await fetchVideos(query) })));
+        const mixed = [];
+        responses.forEach(({ query, videos }) => {
+          videos.forEach((video) => mixed.push({ ...video, sourceQuery: query }));
+        });
+
+        const unique = shuffle(mixed).filter((video) => {
+          if (shortsSeenIds.has(video.id)) return false;
+          shortsSeenIds.add(video.id);
+          return true;
+        }).slice(0, batchTarget);
+
+        unique.forEach((video) => shortsFeed.appendChild(createShortItem(video)));
+
+        if (!shortsObserver) {
+          shortsObserver = new IntersectionObserver((entries) => {
+            const visible = entries.find((entry) => entry.isIntersecting);
+            if (visible) activateShortFrame(visible.target);
+          }, { threshold: 0.7, root: shortsSection });
+        }
+
+        unique.forEach((_, idx) => {
+          const item = shortsFeed.children[shortsFeed.children.length - unique.length + idx];
+          shortsObserver.observe(item);
+        });
+
+      } catch (error) {
+        showStatus("Could not load more Shorts right now.", true);
+      } finally {
+        shortsLoading = false;
+        shortsLoader.classList.add("hidden");
+      }
+    }
+
+    async function enterShortsMode() {
+      shortsModeActive = true;
+      hideStatus();
+      playerSection.classList.add("hidden");
+      playerFrame.src = "";
+      resultsSection.classList.add("hidden");
+      loadingSection.classList.add("hidden");
+      shortsSection.classList.remove("hidden");
+      footerEl.classList.add("hidden");
+      document.body.style.overflow = "hidden";
+      if (shortsFeed.children.length === 0) {
+        await loadMoreShorts(8);
+      }
+      const first = shortsFeed.querySelector(".short-item");
+      if (first) activateShortFrame(first);
+    }
+
+    function exitShortsMode() {
+      shortsModeActive = false;
+      shortsSection.classList.add("hidden");
+      footerEl.classList.remove("hidden");
+      document.body.style.overflow = "";
+      stopAllShortsPlayback();
+      goHome();
     }
 
     async function loadTrending() {
@@ -599,6 +819,13 @@
     }
 
     document.getElementById("searchForm").addEventListener("submit", doSearch);
+    shortsModeBtn.addEventListener("click", enterShortsMode);
+    backToVideosBtn.addEventListener("click", exitShortsMode);
+    shortsSection.addEventListener("scroll", () => {
+      if (!shortsModeActive || shortsLoading) return;
+      const threshold = shortsSection.scrollHeight - shortsSection.clientHeight - 900;
+      if (shortsSection.scrollTop >= threshold) loadMoreShorts(6);
+    });
     window.addEventListener("DOMContentLoaded", loadTrending);
   </script>
 </body>
