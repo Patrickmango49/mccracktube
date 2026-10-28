@@ -651,6 +651,64 @@
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
 
+
+    .header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .player-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .player-action{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 13px;border-radius:999px;border:1px solid rgba(147,180,218,.2);background:rgba(20,31,46,.9);color:#eaf6ff;font-size:13px;font-weight:650;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
+    .player-action:hover{transform:translateY(-1px);border-color:rgba(56,217,255,.55);background:#1b2b40}
+    .player-action.is-saved{color:#a8f2ff;border-color:rgba(56,217,255,.5)}
+    .settings-backdrop{position:fixed;inset:0;z-index:1000;display:flex;justify-content:flex-end;background:rgba(1,4,10,.68);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s}
+    .settings-backdrop.open{opacity:1;pointer-events:auto}
+    .settings-panel{width:min(460px,100%);height:100%;overflow-y:auto;padding:26px;border-left:1px solid rgba(150,190,225,.18);background:linear-gradient(160deg,#111b2a,#080d16 72%);box-shadow:-24px 0 80px rgba(0,0,0,.42);transform:translateX(24px);transition:transform .24s}
+    .settings-backdrop.open .settings-panel{transform:translateX(0)}
+    .settings-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:8px}
+    .settings-heading h2{font-size:26px;letter-spacing:-.05em}
+    .settings-description{color:#92a5bc;font-size:13px;line-height:1.6;margin-bottom:25px}
+    .settings-close{width:38px;height:38px;border-radius:50%;border:1px solid rgba(151,185,220,.2);color:#eef7ff;background:rgba(22,34,50,.8);cursor:pointer;font-size:20px}
+    .settings-group{padding:18px 0;border-top:1px solid rgba(148,181,216,.13)}
+    .settings-group h3{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:#86dff5;margin-bottom:14px}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0}
+    .setting-label{display:block;font-size:14px;font-weight:650;color:#edf5ff}
+    .setting-help{display:block;font-size:12px;line-height:1.5;color:#8ea1b8;margin-top:4px}
+    .setting-control{flex-shrink:0;max-width:155px;border:1px solid rgba(148,181,216,.23);border-radius:10px;padding:9px 10px;color:#f3f8ff;background:#111c2b;font:inherit;font-size:13px}
+    .setting-switch{width:44px;height:26px;border:1px solid rgba(151,185,220,.24);border-radius:99px;background:#253348;cursor:pointer;position:relative;flex-shrink:0}
+    .setting-switch:after{content:"";position:absolute;width:18px;height:18px;top:3px;left:3px;border-radius:50%;background:#a8b8ca;transition:transform .18s,background .18s}
+    .setting-switch[aria-checked=true]{background:rgba(56,217,255,.27);border-color:rgba(56,217,255,.6)}
+    .setting-switch[aria-checked=true]:after{transform:translateX(18px);background:#7ceaff}
+    .accent-options{display:flex;gap:9px}
+    .accent-swatch{width:28px;height:28px;border-radius:50%;border:2px solid transparent;outline:1px solid rgba(255,255,255,.18);cursor:pointer}
+    .accent-swatch[aria-pressed=true]{outline:2px solid #fff;outline-offset:3px}
+    .settings-footer{display:flex;gap:10px;padding-top:18px}
+    .settings-footer button{flex:1}
+    body[data-accent=violet]{--accent:#a78bfa;--accent-2:#ec4899;--focus:#c4b5fd}
+    body[data-accent=green]{--accent:#55e6a5;--accent-2:#18b6a4;--focus:#72f0c0}
+    body[data-accent=amber]{--accent:#ffc66d;--accent-2:#ff8b62;--focus:#ffd38c}
+    body[data-accent=blue]{--accent:#38d9ff;--accent-2:#6c7dff;--focus:#54dcff}
+    body[data-theme=midnight]{--bg:#030509;--surface:#0a0e15;--surface-2:#080c12}
+    body[data-theme=oled]{--bg:#000;--surface:#050505;--surface-2:#000}
+    body[data-theme=slate]{--bg:#10151d;--surface:#1a2431;--surface-2:#131c27}
+    body[data-compact=true] .video-grid{gap:10px}
+    body[data-compact=true] .card-info{padding:9px 10px 11px}
+    body[data-hidehero=true] .intro-banner{display:none}
+    body[data-motion=off] *,body[data-motion=off] *:before,body[data-motion=off] *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .shorts-mode{height:calc(100dvh - 76px);min-height:420px}
+    .shorts-topbar{position:absolute;inset:0 0 auto;align-items:center;justify-content:space-between;pointer-events:none}
+    .shorts-topbar button{pointer-events:auto}
+    .short-feed,.shorts-feed{height:100%}
+    .short-item{overscroll-behavior:contain}
+    .short-video-wrap{height:min(100%,900px);max-height:100%;border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px rgba(152,190,228,.12),0 24px 80px rgba(0,0,0,.4)}
+    .short-overlay{z-index:3;left:max(16px,calc((100vw - 500px)/2));right:82px;bottom:28px}
+    .short-title{font-size:15px;line-height:1.45;overflow-wrap:anywhere}
+    .short-nav-btn{z-index:15;border:1px solid rgba(178,208,240,.24);backdrop-filter:blur(12px)}
+    .shorts-loader{position:absolute;z-index:20;left:50%;bottom:16px;transform:translateX(-50%);padding:10px 15px;border:1px solid rgba(148,181,216,.2);border-radius:999px;background:rgba(9,15,24,.88);color:#c5d7eb;font-size:12px}
+    .shorts-loader .skeleton{display:none}
+    .shorts-empty{max-width:420px;margin:auto;padding:30px 24px;text-align:center;color:#eaf6ff}
+    .shorts-empty h2{font-size:23px;letter-spacing:-.04em;margin-bottom:8px}
+    .shorts-empty p{color:#9db0c6;font-size:14px;line-height:1.6;margin-bottom:18px}
+    .shorts-empty button{padding:11px 16px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#061019;font-weight:750;cursor:pointer}
+    @media(max-width:700px){.header-inner{grid-template-columns:1fr auto}.header-actions{grid-column:2;grid-row:1}.header-actions .nav-btn{padding:0 12px;font-size:13px}.settings-panel{padding:22px 18px}.shorts-mode{height:calc(100dvh - 105px);min-height:400px}.short-video-wrap{border-radius:0;box-shadow:none}.short-overlay{left:16px;right:76px;bottom:24px}.short-nav-btn{right:12px;width:44px;height:44px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
   </style>
 </head>
 <body>
@@ -665,7 +723,7 @@
           </svg>
         </button>
       </form>
-      <button id="shortsModeBtn" class="nav-btn" type="button" aria-label="Open Shorts mode">Shorts</button>
+      <div class="header-actions"><button id="shortsModeBtn" class="nav-btn" type="button" aria-label="Open Shorts mode">Shorts</button><button id="settingsOpenBtn" class="nav-btn" type="button" aria-label="Open settings">Settings</button></div>
     </div>
   </header>
 
@@ -681,7 +739,7 @@
         <iframe id="playerFrame" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
       <div class="player-meta">
-        <div id="playerTitle" class="player-title"></div>
+        <div id="playerTitle" class="player-title"></div><div class="player-actions"><button id="saveVideoBtn" class="player-action" type="button">＋ Watch later</button><button id="fullscreenPlayerBtn" class="player-action" type="button">⛶ Theater mode</button><button id="openOriginalBtn" class="player-action" type="button">↗ Open on YouTube</button><button id="copyVideoBtn" class="player-action" type="button">Copy link</button></div>
       </div>
     </section>
 
@@ -723,9 +781,78 @@
       </div>
     </section>
 
+
+  <div id="settingsBackdrop" class="settings-backdrop" aria-hidden="true"><aside class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="settings-heading"><div><h2 id="settingsTitle">Your experience</h2></div><button id="settingsCloseBtn" class="settings-close" type="button" aria-label="Close settings">×</button></div>
+    <p class="settings-description">Make McCrackTube feel like yours. Preferences stay in this browser on this device.</p>
+    <section class="settings-group"><h3>Appearance</h3>
+      <div class="setting-row"><div><span class="setting-label">Color theme</span><span class="setting-help">Choose your background style</span></div><select id="themeSetting" class="setting-control"><option value="deep">Deep space</option><option value="midnight">Midnight</option><option value="oled">Pure black OLED</option><option value="slate">Slate</option></select></div>
+      <div class="setting-row"><div><span class="setting-label">Accent color</span><span class="setting-help">Highlight and focus color</span></div><div class="accent-options"><button class="accent-swatch" data-accent-choice="blue" aria-label="Cyan blue" aria-pressed="true" style="background:linear-gradient(135deg,#38d9ff,#6c7dff)"></button><button class="accent-swatch" data-accent-choice="violet" aria-label="Violet pink" aria-pressed="false" style="background:linear-gradient(135deg,#a78bfa,#ec4899)"></button><button class="accent-swatch" data-accent-choice="green" aria-label="Mint green" aria-pressed="false" style="background:linear-gradient(135deg,#55e6a5,#18b6a4)"></button><button class="accent-swatch" data-accent-choice="amber" aria-label="Amber orange" aria-pressed="false" style="background:linear-gradient(135deg,#ffc66d,#ff8b62)"></button></div></div>
+      <div class="setting-row"><div><span class="setting-label">Compact video cards</span><span class="setting-help">Fit more results on screen</span></div><button id="compactSetting" class="setting-switch" type="button" role="switch" aria-checked="false"></button></div>
+      <div class="setting-row"><div><span class="setting-label">Show welcome banner</span><span class="setting-help">Hide it for a cleaner library</span></div><button id="heroSetting" class="setting-switch" type="button" role="switch" aria-checked="true"></button></div>
+    </section>
+    <section class="settings-group"><h3>Playback & accessibility</h3>
+      <div class="setting-row"><div><span class="setting-label">Shorts autoplay</span><span class="setting-help">Start the selected short automatically</span></div><button id="autoplaySetting" class="setting-switch" type="button" role="switch" aria-checked="true"></button></div>
+      <div class="setting-row"><div><span class="setting-label">Reduce motion</span><span class="setting-help">Disable most interface animation</span></div><button id="motionSetting" class="setting-switch" type="button" role="switch" aria-checked="false"></button></div>
+      <div class="setting-row"><div><span class="setting-label">Shorts navigation</span><span class="setting-help">Choose navigation controls</span></div><select id="shortsNavSetting" class="setting-control"><option value="all">All controls</option><option value="buttons">Buttons only</option><option value="swipe">Swipe + keyboard</option></select></div>
+    </section>
+    <section class="settings-group"><h3>Privacy & data</h3>
+      <div class="setting-row"><div><span class="setting-label">Saved videos</span><span class="setting-help" id="savedCountLabel">Stored only in this browser</span></div><button id="viewSavedBtn" class="player-action" type="button">View saved</button></div>
+      <div class="setting-row"><div><span class="setting-label">Clear preferences</span><span class="setting-help">Reset appearance and playback settings</span></div><button id="resetSettingsBtn" class="player-action" type="button">Reset</button></div>
+    </section><div class="settings-footer"><button id="settingsDoneBtn" class="player-action" type="button">Done</button></div>
+  </aside></div>
   <footer>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube — Not affiliated with YouTube or Google.</footer>
 
   <script>
+
+    const SETTINGS_KEY="mccracktube-settings-v2",SAVED_VIDEOS_KEY="mccracktube-watch-later-v1";
+    const defaultSettings={theme:"deep",accent:"blue",compact:false,showHero:true,autoplayShorts:true,reduceMotion:false,shortsNav:"all"};
+    let settings={...defaultSettings},currentVideo=null,theaterMode=false,savedVideos=[];
+    try{settings={...defaultSettings,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch(error){}
+    try{savedVideos=JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY)||"[]");if(!Array.isArray(savedVideos))savedVideos=[]}catch(error){savedVideos=[]}
+    function persistSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings))}catch(error){}}
+    function applySettings(){
+      document.body.dataset.theme=settings.theme==="deep"?"":settings.theme;document.body.dataset.accent=settings.accent;
+      document.body.dataset.compact=String(!!settings.compact);document.body.dataset.hidehero=String(!settings.showHero);document.body.dataset.motion=settings.reduceMotion?"off":"on";
+      document.getElementById("themeSetting").value=settings.theme;
+      [["compactSetting","compact"],["heroSetting","showHero"],["autoplaySetting","autoplayShorts"],["motionSetting","reduceMotion"]].forEach(([id,key])=>document.getElementById(id).setAttribute("aria-checked",String(!!settings[key])));
+      document.getElementById("shortsNavSetting").value=settings.shortsNav;
+      document.querySelectorAll("[data-accent-choice]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.accentChoice===settings.accent)));
+      document.getElementById("savedCountLabel").textContent=savedVideos.length+" saved video"+(savedVideos.length===1?"":"s")+" stored in this browser";
+    }
+    function updateSetting(key,value){settings[key]=value;persistSettings();applySettings();if(key==="autoplayShorts"&&shortsModeActive){const active=shortsFeed.querySelector(".short-item.active");if(active){const frame=active.querySelector("iframe");if(frame)frame.src="about:blank";activateShortFrame(active)}}}
+    function openSettings(){const b=document.getElementById("settingsBackdrop");b.classList.add("open");b.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";document.getElementById("settingsCloseBtn").focus()}
+    function closeSettings(){const b=document.getElementById("settingsBackdrop");b.classList.remove("open");b.setAttribute("aria-hidden","true");document.body.style.overflow=shortsModeActive?"hidden":"";document.getElementById("settingsOpenBtn").focus()}
+    function resetSettings(){settings={...defaultSettings};persistSettings();applySettings()}
+    function toggleSaveCurrentVideo(){
+      if(!currentVideo||!currentVideo.id)return;const i=savedVideos.findIndex(v=>v.id===currentVideo.id);
+      if(i>=0)savedVideos.splice(i,1);else savedVideos.unshift({id:currentVideo.id,title:currentVideo.title||"Saved video",thumbnail:currentVideo.thumbnail||""});
+      savedVideos=savedVideos.slice(0,200);try{localStorage.setItem(SAVED_VIDEOS_KEY,JSON.stringify(savedVideos))}catch(error){}updateSaveButton();applySettings();
+    }
+    function updateSaveButton(){const b=document.getElementById("saveVideoBtn");const saved=!!currentVideo&&savedVideos.some(v=>v.id===currentVideo.id);b.classList.toggle("is-saved",saved);b.textContent=saved?"✓ Saved for later":"＋ Watch later"}
+    function showSavedVideos(){
+      closeSettings();playerSection.classList.add("hidden");resultsSection.classList.remove("hidden");loadingSection.classList.add("hidden");shortsSection.classList.add("hidden");footerEl.classList.remove("hidden");document.body.style.overflow="";
+      resultsLabel.textContent="Watch later";resultsSubtitle.textContent=savedVideos.length+" saved video"+(savedVideos.length===1?"":"s")+" on this device";resultsGrid.innerHTML="";
+      if(!savedVideos.length){showStatus("Your Watch later list is empty. Play a video and tap Watch later to save it.");return}
+      hideStatus();savedVideos.forEach(video=>resultsGrid.appendChild(makeCard(video)));
+    }
+    function toggleTheaterMode(){theaterMode=!theaterMode;playerSection.classList.toggle("theater-mode",theaterMode);document.getElementById("fullscreenPlayerBtn").textContent=theaterMode?"⤢ Exit theater":"⛶ Theater mode";if(theaterMode)playerSection.scrollIntoView({behavior:settings.reduceMotion?"auto":"smooth",block:"start"})}
+    function openOriginalVideo(){if(currentVideo?.id)window.open("https://www.youtube.com/watch?v="+encodeURIComponent(currentVideo.id),"_blank","noopener,noreferrer")}
+    async function copyCurrentVideoLink(){
+      if(!currentVideo?.id)return;const url="https://www.youtube.com/watch?v="+encodeURIComponent(currentVideo.id);
+      try{await navigator.clipboard.writeText(url);const b=document.getElementById("copyVideoBtn");b.textContent="✓ Copied";window.setTimeout(()=>b.textContent="Copy link",1500)}
+      catch(error){searchInput.value=url;searchInput.focus();searchInput.select();showStatus("Clipboard access is unavailable. The video link is selected in the search field so you can copy it.")}
+    }
+    function handleGlobalKeydown(event){
+      if(event.key==="Escape"&&document.getElementById("settingsBackdrop").classList.contains("open")){closeSettings();return}
+      if(document.getElementById("settingsBackdrop").classList.contains("open"))return;
+      if(shortsModeActive&&!["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)){
+        if(event.key==="ArrowDown"||event.key==="PageDown"){event.preventDefault();showShort(currentShortIndex+1)}
+        if(event.key==="ArrowUp"||event.key==="PageUp"){event.preventDefault();showShort(currentShortIndex-1)}
+        if(event.key==="Escape"||event.key.toLowerCase()==="q"){event.preventDefault();exitShortsMode()}
+      }
+    }
+
     const TRENDING_QUERIES = [
       "trending videos",
       "viral videos",
@@ -848,10 +975,13 @@
     }
 
     function playVideo(video) {
-      playerFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(video.id)}?autoplay=1&rel=0`;
-      playerTitle.textContent = video.title;
+      if (!video || !video.id) return;
+      currentVideo = video;
+      playerFrame.src = "https://www.youtube.com/embed/" + encodeURIComponent(video.id) + "?autoplay=1&rel=0&playsinline=1";
+      playerTitle.textContent = video.title || "Now playing";
       playerSection.classList.remove("hidden");
-      playerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      updateSaveButton();
+      playerSection.scrollIntoView({ behavior: settings.reduceMotion ? "auto" : "smooth", block: "start" });
     }
 
     function setTrendingHeadings(queryUsed = "") {
@@ -863,136 +993,69 @@
 
     function getNextShortQuerySet(batchSize = 3) {
       const rotated = [];
-      for (let i = 0; i < batchSize; i += 1) {
-        rotated.push(SHORTS_QUERIES[(shortsCursor + i) % SHORTS_QUERIES.length]);
-      }
-      shortsCursor = (shortsCursor + batchSize) % SHORTS_QUERIES.length;
+      for (let i=0;i<batchSize;i++) rotated.push(SHORTS_QUERIES[(shortsCursor+i)%SHORTS_QUERIES.length]);
+      shortsCursor=(shortsCursor+batchSize)%SHORTS_QUERIES.length;
       return shuffle(rotated);
     }
-
-    function stopAllShortsPlayback() {
-      shortsFeed.querySelectorAll("iframe").forEach((frame) => {
-        frame.src = frame.dataset.baseSrc || frame.src;
+    function stopAllShortsPlayback(){shortsFeed.querySelectorAll("iframe").forEach(frame=>{frame.src="about:blank";});}
+    function activateShortFrame(item){
+      const current=item?.querySelector("iframe"); if(!current)return;
+      shortsFeed.querySelectorAll("iframe").forEach(frame=>{
+        if(frame===current){if(frame.src==="about:blank"||!frame.src)frame.src=frame.dataset.baseSrc+(settings.autoplayShorts?"&autoplay=1":"");}
+        else if(frame.src!=="about:blank")frame.src="about:blank";
       });
     }
-
-    function activateShortFrame(item) {
-      const current = item?.querySelector("iframe");
-      if (!current) return;
-      shortsFeed.querySelectorAll("iframe").forEach((frame) => {
-        if (frame === current) {
-          frame.src = `${frame.dataset.baseSrc}&autoplay=1`;
-        } else {
-          frame.src = frame.dataset.baseSrc;
-        }
-      });
+    function createShortItem(video){
+      const item=document.createElement("article");item.className="short-item";
+      const frame=document.createElement("iframe");frame.className="short-frame";frame.title=video.title||"Short video";
+      frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";frame.allowFullscreen=true;frame.loading="lazy";
+      frame.dataset.baseSrc="https://www.youtube.com/embed/"+encodeURIComponent(video.id)+"?mute=1&controls=1&rel=0&playsinline=1";frame.src="about:blank";
+      const overlay=document.createElement("div");overlay.className="short-overlay";
+      const title=document.createElement("div");title.className="short-title";title.textContent=video.title||"Untitled video";
+      const source=document.createElement("div");source.className="short-query";source.textContent="Found via: "+(video.sourceQuery||"video search");overlay.append(title,source);
+      const wrap=document.createElement("div");wrap.className="short-video-wrap";wrap.appendChild(frame);item.append(wrap,overlay);return item;
     }
-
-    function createShortItem(video) {
-      const item = document.createElement("article");
-      item.className = "short-item";
-
-      const frame = document.createElement("iframe");
-      frame.className = "short-frame";
-      frame.title = video.title;
-      frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      frame.allowFullscreen = true;
-      frame.loading = "lazy";
-      frame.dataset.baseSrc = `https://www.youtube.com/embed/${encodeURIComponent(video.id)}?mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=${encodeURIComponent(video.id)}`;
-      frame.src = frame.dataset.baseSrc;
-
-      const overlay = document.createElement("div");
-      overlay.className = "short-overlay";
-      overlay.innerHTML = `<div class="short-title">${video.title}</div><div class="short-query">From: ${video.sourceQuery}</div>`;
-
-      const videoWrap = document.createElement("div");
-      videoWrap.className = "short-video-wrap";
-      videoWrap.appendChild(frame);
-
-      item.append(videoWrap, overlay);
-      return item;
+    function showShort(index){
+      const items=shortsFeed.querySelectorAll(".short-item");if(!items.length)return;
+      if(index<0)index=0;
+      if(index>=items.length){loadMoreShorts(6,index);return;}
+      items.forEach(item=>item.classList.remove("active"));
+      const active=items[index];active.classList.add("active");activateShortFrame(active);currentShortIndex=index;
     }
-
-    function showShort(index) {
-      const items = shortsFeed.children;
-
-      if (!items.length) return;
-
-      if (index < 0) index = 0;
-
-      if (index >= items.length) {
-        loadMoreShorts(6);
-        return;
-      }
-
-      Array.from(items).forEach((item) => item.classList.remove("active"));
-
-      const activeItem = items[index];
-      activeItem.classList.add("active");
-
-      activateShortFrame(activeItem);
-      currentShortIndex = index;
+    function showShortsEmptyState(message){
+      let empty=shortsFeed.querySelector(".shorts-empty");
+      if(!empty){empty=document.createElement("div");empty.className="shorts-empty";const title=document.createElement("h2");title.textContent="No Shorts found yet";
+        const copy=document.createElement("p");copy.className="shorts-empty-copy";const retry=document.createElement("button");retry.type="button";retry.textContent="Try again";
+        retry.addEventListener("click",()=>{empty.remove();loadMoreShorts(8);});empty.append(title,copy,retry);shortsFeed.appendChild(empty);}
+      empty.querySelector(".shorts-empty-copy").textContent=message;
     }
-
-    async function loadMoreShorts(batchTarget = 8) {
-      if (shortsLoading) return;
-      shortsLoading = true;
-      shortsLoader.classList.remove("hidden");
-      try {
-        const queries = getNextShortQuerySet(3);
-        const responses = await Promise.all(queries.map(async (query) => ({ query, videos: await fetchVideos(query) })));
-        const mixed = [];
-        responses.forEach(({ query, videos }) => {
-          videos.forEach((video) => mixed.push({ ...video, sourceQuery: query }));
-        });
-
-        const unique = shuffle(mixed).filter((video) => {
-          if (shortsSeenIds.has(video.id)) return false;
-          shortsSeenIds.add(video.id);
-          return true;
-        }).slice(0, batchTarget);
-
-        unique.forEach((video) => shortsFeed.appendChild(createShortItem(video)));
-
-        if (shortsFeed.children.length === unique.length) {
-          showShort(0);
-        }
-
-      } catch (error) {
-        showStatus("Could not load more Shorts right now.", true);
-      } finally {
-        shortsLoading = false;
-        shortsLoader.classList.add("hidden");
-      }
+    async function loadMoreShorts(batchTarget=8,navigateToIndex=null){
+      if(shortsLoading)return;shortsLoading=true;shortsLoader.classList.remove("hidden");shortsLoader.textContent="Finding more Shorts…";
+      try{
+        const queries=getNextShortQuerySet(3);
+        const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchVideos(query)}}catch(error){return{query,videos:[]}}}));
+        const mixed=[];responses.forEach(({query,videos})=>videos.forEach(video=>mixed.push({...video,sourceQuery:query})));
+        const unique=shuffle(mixed).filter(video=>{if(!video||!video.id||shortsSeenIds.has(video.id))return false;shortsSeenIds.add(video.id);return true;}).slice(0,batchTarget);
+        shortsFeed.querySelector(".shorts-empty")?.remove();unique.forEach(video=>shortsFeed.appendChild(createShortItem(video)));
+        const count=shortsFeed.querySelectorAll(".short-item").length;
+        if(!count)showShortsEmptyState("The video source did not return Shorts this time. Check your connection and try again.");
+        else if(navigateToIndex!==null&&navigateToIndex<count)showShort(navigateToIndex);
+        else if(!shortsFeed.querySelector(".short-item.active"))showShort(Math.min(currentShortIndex,count-1));
+        if(!unique.length&&count){shortsLoader.textContent="You’re all caught up. Try again in a moment.";window.setTimeout(()=>shortsLoader.classList.add("hidden"),1800);}
+      }catch(error){if(!shortsFeed.querySelector(".short-item"))showShortsEmptyState("Shorts could not load. Check your connection and try again.");}
+      finally{shortsLoading=false;if(!shortsLoader.textContent.startsWith("You’re all caught up"))shortsLoader.classList.add("hidden");}
     }
-
-    async function enterShortsMode() {
-      shortsModeActive = true;
-      hideStatus();
-      playerSection.classList.add("hidden");
-      playerFrame.src = "";
-      resultsSection.classList.add("hidden");
-      loadingSection.classList.add("hidden");
-      shortsSection.classList.remove("hidden");
-      footerEl.classList.add("hidden");
-      document.body.style.overflow = "hidden";
-      if (shortsFeed.children.length === 0) {
-        await loadMoreShorts(8);
-      }
-      if (shortsFeed.children.length > 0) {
-        showShort(currentShortIndex);
-      }
+    async function enterShortsMode(){
+      shortsModeActive=true;hideStatus();playerSection.classList.add("hidden");playerFrame.src="";
+      resultsSection.classList.add("hidden");loadingSection.classList.add("hidden");shortsSection.classList.remove("hidden");footerEl.classList.add("hidden");
+      document.body.style.overflow="hidden";document.title="Shorts — McCrackTube";
+      if(!shortsFeed.querySelector(".short-item"))await loadMoreShorts(8);
+      if(shortsFeed.querySelector(".short-item"))showShort(currentShortIndex);
     }
-
-    function exitShortsMode() {
-      shortsModeActive = false;
-      shortsSection.classList.add("hidden");
-      footerEl.classList.remove("hidden");
-      document.body.style.overflow = "";
-      stopAllShortsPlayback();
-      goHome();
+    function exitShortsMode(){
+      shortsModeActive=false;shortsSection.classList.add("hidden");footerEl.classList.remove("hidden");document.body.style.overflow="";
+      stopAllShortsPlayback();document.title="McCrackTube — Watch Videos";goHome();
     }
-
     async function loadTrending() {
       hideStatus();
       clearSearchBtn.classList.add("hidden");
@@ -1039,20 +1102,14 @@
     function extractYouTubeId(input) {
       try {
         const url = new URL(input);
-
-        // youtube.com/watch?v=VIDEO_ID
-        if (url.hostname.includes("youtube.com")) {
-          return url.searchParams.get("v");
+        const host = url.hostname.replace(/^www\\./, "");
+        if (["youtube.com","m.youtube.com","music.youtube.com"].includes(host)) {
+          if (url.pathname === "/watch") return url.searchParams.get("v");
+          const parts = url.pathname.split("/").filter(Boolean);
+          if (["shorts","embed","live"].includes(parts[0]) && parts[1]) return parts[1];
         }
-
-        // youtu.be/VIDEO_ID
-        if (url.hostname === "youtu.be") {
-          return url.pathname.slice(1);
-        }
-      } catch (e) {
-        // Not a valid URL → ignore
-      }
-
+        if (host === "youtu.be") return url.pathname.split("/").filter(Boolean)[0] || null;
+      } catch (error) {}
       return null;
     }
 
@@ -1109,13 +1166,31 @@
     document.getElementById("searchForm").addEventListener("submit", doSearch);
     shortsModeBtn.addEventListener("click", enterShortsMode);
     backToVideosBtn.addEventListener("click", exitShortsMode);
-    document.getElementById("nextShortBtn").addEventListener("click", () => {
-      showShort(currentShortIndex + 1);
-    });
-    document.getElementById("prevShortBtn").addEventListener("click", () => {
-      showShort(currentShortIndex - 1);
-    });
-    window.addEventListener("DOMContentLoaded", loadTrending);
+    document.getElementById("nextShortBtn").addEventListener("click",()=>showShort(currentShortIndex+1));
+    document.getElementById("prevShortBtn").addEventListener("click",()=>showShort(currentShortIndex-1));
+    document.getElementById("settingsOpenBtn").addEventListener("click",openSettings);
+    document.getElementById("settingsCloseBtn").addEventListener("click",closeSettings);
+    document.getElementById("settingsDoneBtn").addEventListener("click",closeSettings);
+    document.getElementById("settingsBackdrop").addEventListener("click",event=>{if(event.target.id==="settingsBackdrop")closeSettings()});
+    document.getElementById("themeSetting").addEventListener("change",event=>updateSetting("theme",event.target.value));
+    document.querySelectorAll("[data-accent-choice]").forEach(b=>b.addEventListener("click",()=>updateSetting("accent",b.dataset.accentChoice)));
+    document.getElementById("compactSetting").addEventListener("click",()=>updateSetting("compact",!settings.compact));
+    document.getElementById("heroSetting").addEventListener("click",()=>updateSetting("showHero",!settings.showHero));
+    document.getElementById("autoplaySetting").addEventListener("click",()=>updateSetting("autoplayShorts",!settings.autoplayShorts));
+    document.getElementById("motionSetting").addEventListener("click",()=>updateSetting("reduceMotion",!settings.reduceMotion));
+    document.getElementById("shortsNavSetting").addEventListener("change",event=>updateSetting("shortsNav",event.target.value));
+    document.getElementById("resetSettingsBtn").addEventListener("click",resetSettings);
+    document.getElementById("viewSavedBtn").addEventListener("click",showSavedVideos);
+    document.getElementById("saveVideoBtn").addEventListener("click",toggleSaveCurrentVideo);
+    document.getElementById("fullscreenPlayerBtn").addEventListener("click",toggleTheaterMode);
+    document.getElementById("openOriginalBtn").addEventListener("click",openOriginalVideo);
+    document.getElementById("copyVideoBtn").addEventListener("click",copyCurrentVideoLink);
+    window.addEventListener("keydown",handleGlobalKeydown);
+    let shortsTouchStartY=null;
+    shortsSection.addEventListener("touchstart",event=>{shortsTouchStartY=event.changedTouches[0]?.clientY??null},{passive:true});
+    shortsSection.addEventListener("touchend",event=>{if(settings.shortsNav==="buttons"||shortsTouchStartY===null||!shortsModeActive)return;const delta=shortsTouchStartY-(event.changedTouches[0]?.clientY??shortsTouchStartY);if(Math.abs(delta)>55)showShort(currentShortIndex+(delta>0?1:-1));shortsTouchStartY=null},{passive:true});
+    shortsSection.addEventListener("wheel",event=>{if(!shortsModeActive||settings.shortsNav==="buttons"||Math.abs(event.deltaY)<25)return;event.preventDefault();showShort(currentShortIndex+(event.deltaY>0?1:-1)},{passive:false});
+    window.addEventListener("DOMContentLoaded",()=>{applySettings();loadTrending()});
   </script>
 </body>
 </html>
