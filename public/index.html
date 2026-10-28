@@ -709,6 +709,13 @@
     @media(max-width:700px){.header-inner{grid-template-columns:1fr auto}.header-actions{grid-column:2;grid-row:1}.header-actions .nav-btn{padding:0 12px;font-size:13px}.settings-panel{padding:22px 18px}.shorts-mode{height:calc(100dvh - 105px);min-height:400px}.short-video-wrap{border-radius:0;box-shadow:none}.short-overlay{left:16px;right:76px;bottom:24px}.short-nav-btn{right:12px;width:44px;height:44px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+
+    .player-wrap.theater-mode{position:fixed;z-index:900;inset:12px;width:auto;max-width:none;margin:0;border-radius:18px;display:flex;flex-direction:column;background:#05080e;box-shadow:0 0 0 100vmax rgba(0,0,0,.82),0 25px 100px rgba(0,0,0,.65)}
+    .player-wrap.theater-mode .player-frame-wrap{flex:1;min-height:0;aspect-ratio:auto}
+    .player-wrap.theater-mode .player-meta{flex-shrink:0}
+    .player-wrap.theater-mode .player-title{font-size:18px}
+    @media(max-width:700px){.player-wrap.theater-mode{inset:0;border-radius:0}.player-wrap.theater-mode .player-meta{padding:12px}}
+
   </style>
 </head>
 <body>
@@ -1189,7 +1196,7 @@
     let shortsTouchStartY=null;
     shortsSection.addEventListener("touchstart",event=>{shortsTouchStartY=event.changedTouches[0]?.clientY??null},{passive:true});
     shortsSection.addEventListener("touchend",event=>{if(settings.shortsNav==="buttons"||shortsTouchStartY===null||!shortsModeActive)return;const delta=shortsTouchStartY-(event.changedTouches[0]?.clientY??shortsTouchStartY);if(Math.abs(delta)>55)showShort(currentShortIndex+(delta>0?1:-1));shortsTouchStartY=null},{passive:true});
-    shortsSection.addEventListener("wheel",event=>{if(!shortsModeActive||settings.shortsNav==="buttons"||Math.abs(event.deltaY)<25)return;event.preventDefault();showShort(currentShortIndex+(event.deltaY>0?1:-1)},{passive:false});
+    shortsSection.addEventListener("wheel",event=>{if(!shortsModeActive||settings.shortsNav==="buttons"||Math.abs(event.deltaY)<25)return;event.preventDefault();showShort(currentShortIndex+(event.deltaY>0?1:-1));},{passive:false});
     window.addEventListener("DOMContentLoaded",()=>{applySettings();loadTrending()});
   </script>
 </body>
