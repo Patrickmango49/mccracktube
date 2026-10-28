@@ -838,7 +838,7 @@
     }
     function updateSaveButton(){const b=document.getElementById("saveVideoBtn");const saved=!!currentVideo&&savedVideos.some(v=>v.id===currentVideo.id);b.classList.toggle("is-saved",saved);b.textContent=saved?"✓ Saved for later":"＋ Watch later"}
     function showSavedVideos(){
-      closeSettings();playerSection.classList.add("hidden");resultsSection.classList.remove("hidden");loadingSection.classList.add("hidden");shortsSection.classList.add("hidden");footerEl.classList.remove("hidden");document.body.style.overflow="";
+      closeSettings();shortsModeActive=false;stopAllShortsPlayback();playerSection.classList.add("hidden");resultsSection.classList.remove("hidden");loadingSection.classList.add("hidden");shortsSection.classList.add("hidden");footerEl.classList.remove("hidden");document.body.style.overflow="";document.title="Watch later — McCrackTube";
       resultsLabel.textContent="Watch later";resultsSubtitle.textContent=savedVideos.length+" saved video"+(savedVideos.length===1?"":"s")+" on this device";resultsGrid.innerHTML="";
       if(!savedVideos.length){showStatus("Your Watch later list is empty. Play a video and tap Watch later to save it.");return}
       hideStatus();savedVideos.forEach(video=>resultsGrid.appendChild(makeCard(video)));
@@ -890,7 +890,7 @@
     const mainEl = document.querySelector("main");
     const footerEl = document.querySelector("footer");
 
-    const SHORTS_QUERIES = ["youtube shorts", "viral shorts", "short funny videos", "quick clips", "meme shorts", "trending short videos"];
+    const SHORTS_QUERIES = ["#shorts funny", "#shorts gaming", "#shorts memes", "viral youtube shorts", "quick comedy shorts", "trending shorts today", "Minecraft shorts", "sports shorts"];
     let shortsCursor = 0;
     let shortsLoading = false;
     let shortsModeActive = false;
@@ -939,7 +939,7 @@
       thumbWrap.className = "thumb-wrap";
 
       const img = document.createElement("img");
-      img.src = video.thumbnail;
+      img.src = video.thumbnail || (video.id ? "https://i.ytimg.com/vi/" + encodeURIComponent(video.id) + "/hqdefault.jpg" : "");
       img.alt = `Thumbnail for ${video.title}`;
       img.loading = "lazy";
 
