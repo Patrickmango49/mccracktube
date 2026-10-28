@@ -1109,7 +1109,7 @@
     function extractYouTubeId(input) {
       try {
         const url = new URL(input);
-        const host = url.hostname.replace(/^www\\./, "");
+        const host = url.hostname.replace(/^www\./, "");
         if (["youtube.com","m.youtube.com","music.youtube.com"].includes(host)) {
           if (url.pathname === "/watch") return url.searchParams.get("v");
           const parts = url.pathname.split("/").filter(Boolean);
