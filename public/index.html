@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <title>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube - Watch Videos</title>
   <meta name="description" content="𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube - Your dark-mode video destination." />
   <meta property="og:title" content="𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube" />
@@ -66,6 +67,7 @@
       transition: opacity .2s;
     }
     .logo:hover { opacity: 0.8; }
+    .logo img { width: 36px; height: 36px; object-fit: contain; display: block; flex: 0 0 auto; border-radius: 9px; }
 
     .search-form {
       flex: 1;
@@ -481,6 +483,8 @@
       color: transparent;
       transition: filter .2s, transform .2s;
     }
+    .logo { display: inline-flex; align-items: center; gap: 10px; color: #fff; background: none; -webkit-text-fill-color: #fff; }
+    .logo img { width: 40px; height: 40px; border-radius: 11px; object-fit: contain; filter: drop-shadow(0 3px 12px rgba(0,0,0,.25)); }
     .logo:hover { opacity: 1; filter: drop-shadow(0 0 15px rgba(56,217,255,.25)); transform: translateY(-1px); }
     .search-form { max-width: 660px; filter: none; }
     .search-input {
@@ -721,7 +725,7 @@
 <body>
   <header>
     <div class="header-inner">
-      <button class="logo" onclick="goHome()" aria-label="Go to home">𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube</button>
+      <button class="logo" onclick="goHome()" aria-label="McCrackTube home"><img src="/favicon.png" alt="" /><span>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube</span></button>
       <form class="search-form" id="searchForm" aria-label="Video search form">
         <input id="searchInput" class="search-input" type="text" placeholder="Search videos" autocomplete="off" aria-label="Search videos" />
         <button class="search-btn" type="submit" aria-label="Search">
