@@ -1189,11 +1189,12 @@
         const queries=getNextShortQuerySet(3);
         const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchShortVideos(query)}}catch(error){return{query,videos:[]}}}));
         const mixed=[];responses.forEach(({query,videos})=>videos.forEach(video=>mixed.push({...video,sourceQuery:query})));
-        const unique=shuffle(mixed).filter(video=>{
+        const candidates=shuffle(mixed).filter(video=>{
           const duration=Number(video?.durationSeconds);
-          if(!video||!video.id||shortsSeenIds.has(video.id)||!Number.isFinite(duration)||duration<=0||duration>60)return false;
-          shortsSeenIds.add(video.id);return true;
-        }).slice(0,batchTarget);
+          return !!video&&!!video.id&&!shortsSeenIds.has(video.id)&&Number.isFinite(duration)&&duration>0&&duration<=60;
+        });
+        const unique=candidates.slice(0,batchTarget);
+        unique.forEach(video=>shortsSeenIds.add(video.id));
         shortsFeed.querySelector(".shorts-empty")?.remove();unique.forEach(video=>shortsFeed.appendChild(createShortItem(video)));
         const count=shortsFeed.querySelectorAll(".short-item").length;
         if(!count)showShortsEmptyState("The video source did not return Shorts this time. Check your connection and try again.");
