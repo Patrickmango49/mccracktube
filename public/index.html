@@ -720,6 +720,112 @@
     .player-wrap.theater-mode .player-title{font-size:18px}
     @media(max-width:700px){.player-wrap.theater-mode{inset:0;border-radius:0}.player-wrap.theater-mode .player-meta{padding:12px}}
 
+
+    /* Shorts-first polish: immersive portrait viewer, safer spacing and calmer motion */
+    body.shorts-active { overflow: hidden !important; }
+    body.shorts-active > header,
+    body.shorts-active > main,
+    body.shorts-active > footer { display: none !important; }
+    body.shorts-active #shortsSection {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 50% 45%, #101a29 0%, #03060b 62%);
+    }
+    body.shorts-active .shorts-feed { height: 100%; width: 100%; }
+    body.shorts-active .short-item {
+      inset: 0;
+      height: 100%;
+      opacity: 0;
+      transition: opacity .22s ease;
+      background: #03060b;
+    }
+    body.shorts-active .short-item.active {
+      display: flex;
+      opacity: 1;
+      animation: shortEnter .24s ease both;
+    }
+    @keyframes shortEnter {
+      from { opacity: .55; transform: translateY(9px) scale(.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    body.shorts-active .short-video-wrap {
+      width: min(100vw, 460px, calc(100dvh * 9 / 16));
+      height: 100%;
+      max-height: 100dvh;
+      aspect-ratio: 9 / 16;
+      border-radius: 18px;
+      background: #000;
+      box-shadow: 0 0 0 1px rgba(142,195,231,.16), 0 28px 100px rgba(0,0,0,.58);
+    }
+    body.shorts-active .short-frame { display: block; width: 100%; height: 100%; }
+    body.shorts-active .shorts-topbar {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 30;
+      justify-content: flex-start;
+      padding: max(16px, env(safe-area-inset-top)) 18px 18px;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(0,0,0,.66), transparent);
+    }
+    body.shorts-active .shorts-back-btn {
+      pointer-events: auto;
+      min-height: 42px;
+      border-color: rgba(199,224,248,.22);
+      background: rgba(8,14,23,.66);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 28px rgba(0,0,0,.2);
+      transition: transform .18s ease, background .18s ease;
+    }
+    body.shorts-active .shorts-back-btn:hover { transform: translateY(-1px); background: rgba(24,39,58,.88); }
+    body.shorts-active .short-overlay {
+      z-index: 5;
+      bottom: max(30px, env(safe-area-inset-bottom));
+      left: max(18px, calc((100vw - 460px) / 2 + 18px));
+      right: max(78px, calc((100vw - 460px) / 2 + 76px));
+      padding-top: 48px;
+      background: linear-gradient(0deg, rgba(0,0,0,.62), transparent);
+    }
+    body.shorts-active .short-title { font-size: 15px; font-weight: 750; line-height: 1.45; }
+    body.shorts-active .short-query { margin-top: 5px; font-size: 11px; color: rgba(235,245,255,.76); }
+    body.shorts-active .short-nav-btn {
+      right: max(16px, calc((100vw - 460px) / 2 + 12px));
+      bottom: max(34px, env(safe-area-inset-bottom));
+      width: 46px;
+      height: 46px;
+      color: #f5fbff;
+      background: rgba(9,17,28,.7);
+      border: 1px solid rgba(191,220,247,.24);
+      box-shadow: 0 8px 24px rgba(0,0,0,.28);
+      backdrop-filter: blur(16px);
+      transition: transform .18s ease, background .18s ease;
+    }
+    body.shorts-active .short-nav-btn:hover { transform: scale(1.06); background: rgba(37,64,91,.88); }
+    body.shorts-active .short-nav-btn.up { bottom: max(91px, calc(env(safe-area-inset-bottom) + 82px)); }
+    body.shorts-active .shorts-loader { bottom: max(16px, env(safe-area-inset-bottom)); }
+    .search-input { transition: border-color .2s, box-shadow .2s, background .2s; }
+    .video-card { will-change: transform; }
+    .video-card:active { transform: scale(.985); }
+    .intro-banner { transition: border-color .25s, transform .25s, box-shadow .25s; }
+    .intro-banner:hover { border-color: rgba(92,220,255,.28); box-shadow: 0 26px 80px rgba(0,0,0,.26), inset 0 1px rgba(255,255,255,.05); }
+    @media (max-width: 700px) {
+      body.shorts-active .short-video-wrap { width: 100vw; border-radius: 0; box-shadow: none; }
+      body.shorts-active .short-overlay { left: 16px; right: 74px; bottom: max(26px, env(safe-area-inset-bottom)); }
+      body.shorts-active .short-nav-btn { right: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body.shorts-active .short-item.active { animation: none; }
+      .intro-banner, .video-card, .search-input { transition: none !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -894,7 +1000,7 @@
     const mainEl = document.querySelector("main");
     const footerEl = document.querySelector("footer");
 
-    const SHORTS_QUERIES = ["#shorts funny", "#shorts gaming", "#shorts memes", "viral youtube shorts", "quick comedy shorts", "trending shorts today", "Minecraft shorts", "sports shorts"];
+    const SHORTS_QUERIES = [\n      "funny relatable comedy skits shorts",\n      "viral funny moments and unexpected reactions shorts",\n      "Minecraft funny moments shorts",\n      "Roblox funny moments shorts",\n      "funny animal moments shorts",\n      "quick interesting facts explained shorts",\n      "satisfying clips and clever tricks shorts",\n      "quick food ideas and easy recipes shorts",\n      "DIY before and after transformations shorts",\n      "basketball and sports highlights shorts",\n      "gaming fails and clutch moments shorts",\n      "mini vlog and everyday relatable moments shorts"\n    ];
     let shortsCursor = 0;
     let shortsLoading = false;
     let shortsModeActive = false;
@@ -931,6 +1037,17 @@
       const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
       if (!response.ok) throw new Error("Search request failed");
       return sanitizeVideos(await response.json());
+    }
+
+    async function fetchShortVideos(query) {
+      const response = await fetch(`/shorts?q=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error("Shorts discovery request failed");
+      const videos = sanitizeVideos(await response.json());
+      return videos.filter(video =>
+        Number.isFinite(Number(video.durationSeconds)) &&
+        Number(video.durationSeconds) > 0 &&
+        Number(video.durationSeconds) <= 60
+      );
     }
 
     function makeCard(video) {
@@ -1002,18 +1119,43 @@
 
 
 
-    function getNextShortQuerySet(batchSize = 3) {
+    function getNextShortQuerySet(batchSize = 4) {
       const rotated = [];
-      for (let i=0;i<batchSize;i++) rotated.push(SHORTS_QUERIES[(shortsCursor+i)%SHORTS_QUERIES.length]);
-      shortsCursor=(shortsCursor+batchSize)%SHORTS_QUERIES.length;
+      for (let i = 0; i < batchSize; i++) rotated.push(SHORTS_QUERIES[(shortsCursor + i) % SHORTS_QUERIES.length]);
+      shortsCursor = (shortsCursor + batchSize) % SHORTS_QUERIES.length;
       return shuffle(rotated);
     }
-    function stopAllShortsPlayback(){shortsFeed.querySelectorAll("iframe").forEach(frame=>{frame.src="about:blank";});}
-    function activateShortFrame(item){
-      const current=item?.querySelector("iframe"); if(!current)return;
-      shortsFeed.querySelectorAll("iframe").forEach(frame=>{
-        if(frame===current){if(frame.src==="about:blank"||!frame.src)frame.src=frame.dataset.baseSrc+(settings.autoplayShorts?"&autoplay=1":"");}
-        else if(frame.src!=="about:blank")frame.src="about:blank";
+    function stopAllShortsPlayback() {
+      shortsFeed.querySelectorAll("iframe").forEach(frame => { frame.src = "about:blank"; });
+    }
+    function activateShortFrame(item) {
+      const current = item?.querySelector("iframe");
+      if (!current) return;
+      const items = [...shortsFeed.querySelectorAll(".short-item")];
+      const activeIndex = items.indexOf(item);
+      items.forEach((shortItem, index) => {
+        const frame = shortItem.querySelector("iframe");
+        if (!frame) return;
+        if (index === activeIndex) {
+          frame.loading = "eager";
+          const target = frame.dataset.baseSrc + (settings.autoplayShorts ? "&autoplay=1" : "&autoplay=0");
+          if (frame.dataset.activeSrc !== target) {
+            frame.src = target;
+            frame.dataset.activeSrc = target;
+          }
+        } else if (index === activeIndex + 1) {
+          // Prepare the next player while paused so the next swipe feels quicker.
+          frame.loading = "eager";
+          const preload = frame.dataset.baseSrc + "&autoplay=0";
+          if (frame.dataset.activeSrc !== preload) {
+            frame.src = preload;
+            frame.dataset.activeSrc = preload;
+          }
+        } else {
+          if (frame.src !== "about:blank") frame.src = "about:blank";
+          frame.dataset.activeSrc = "";
+          frame.loading = "lazy";
+        }
       });
     }
     function createShortItem(video){
@@ -1023,7 +1165,7 @@
       frame.dataset.baseSrc="https://www.youtube.com/embed/"+encodeURIComponent(video.id)+"?mute=1&controls=1&rel=0&playsinline=1";frame.src="about:blank";
       const overlay=document.createElement("div");overlay.className="short-overlay";
       const title=document.createElement("div");title.className="short-title";title.textContent=video.title||"Untitled video";
-      const source=document.createElement("div");source.className="short-query";source.textContent="Found via: "+(video.sourceQuery||"video search");overlay.append(title,source);
+      const source=document.createElement("div");source.className="short-query";source.textContent=[video.durationLabel || (video.durationSeconds + "s"),video.portraitHint ? "Portrait" : "Short", "From: "+(video.sourceQuery||"discovery")].filter(Boolean).join(" · ");overlay.append(title,source);
       const wrap=document.createElement("div");wrap.className="short-video-wrap";wrap.appendChild(frame);item.append(wrap,overlay);return item;
     }
     function showShort(index){
@@ -1032,6 +1174,7 @@
       if(index>=items.length){loadMoreShorts(6,index);return;}
       items.forEach(item=>item.classList.remove("active"));
       const active=items[index];active.classList.add("active");activateShortFrame(active);currentShortIndex=index;
+      if(index >= items.length - 2 && !shortsLoading) loadMoreShorts(6);
     }
     function showShortsEmptyState(message){
       let empty=shortsFeed.querySelector(".shorts-empty");
@@ -1044,9 +1187,13 @@
       if(shortsLoading)return;shortsLoading=true;shortsLoader.classList.remove("hidden");shortsLoader.textContent="Finding more Shorts…";
       try{
         const queries=getNextShortQuerySet(3);
-        const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchVideos(query)}}catch(error){return{query,videos:[]}}}));
+        const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchShortVideos(query)}}catch(error){return{query,videos:[]}}}));
         const mixed=[];responses.forEach(({query,videos})=>videos.forEach(video=>mixed.push({...video,sourceQuery:query})));
-        const unique=shuffle(mixed).filter(video=>{if(!video||!video.id||shortsSeenIds.has(video.id))return false;shortsSeenIds.add(video.id);return true;}).slice(0,batchTarget);
+        const unique=shuffle(mixed).filter(video=>{
+          const duration=Number(video?.durationSeconds);
+          if(!video||!video.id||shortsSeenIds.has(video.id)||!Number.isFinite(duration)||duration<=0||duration>60)return false;
+          shortsSeenIds.add(video.id);return true;
+        }).slice(0,batchTarget);
         shortsFeed.querySelector(".shorts-empty")?.remove();unique.forEach(video=>shortsFeed.appendChild(createShortItem(video)));
         const count=shortsFeed.querySelectorAll(".short-item").length;
         if(!count)showShortsEmptyState("The video source did not return Shorts this time. Check your connection and try again.");
@@ -1057,14 +1204,14 @@
       finally{shortsLoading=false;if(!shortsLoader.textContent.startsWith("You’re all caught up"))shortsLoader.classList.add("hidden");}
     }
     async function enterShortsMode(){
-      shortsModeActive=true;hideStatus();playerSection.classList.add("hidden");playerFrame.src="";
+      shortsModeActive=true;document.body.classList.add("shorts-active");hideStatus();playerSection.classList.add("hidden");playerFrame.src="";
       resultsSection.classList.add("hidden");loadingSection.classList.add("hidden");shortsSection.classList.remove("hidden");footerEl.classList.add("hidden");
       document.body.style.overflow="hidden";document.title="Shorts — McCrackTube";
       if(!shortsFeed.querySelector(".short-item"))await loadMoreShorts(8);
       if(shortsFeed.querySelector(".short-item"))showShort(currentShortIndex);
     }
     function exitShortsMode(){
-      shortsModeActive=false;shortsSection.classList.add("hidden");footerEl.classList.remove("hidden");document.body.style.overflow="";
+      shortsModeActive=false;document.body.classList.remove("shorts-active");shortsSection.classList.add("hidden");footerEl.classList.remove("hidden");document.body.style.overflow="";
       stopAllShortsPlayback();document.title="McCrackTube — Watch Videos";goHome();
     }
     async function loadTrending() {
