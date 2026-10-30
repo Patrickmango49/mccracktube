@@ -25,6 +25,40 @@ async function getYT() {
  * Example:
  * /search?q=mrbeast
  */
+
+function parseDuration(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const text = typeof value === "string" ? value : value?.text || value?.toString?.() || "";
+  if (!text || text === "[object Object]") return null;
+  if (/^\\d+(?:\\.\\d+)?$/.test(text.trim())) return Number(text);
+  const parts = text.trim().split(":").map(Number);
+  if (!parts.length || parts.length > 3 || parts.some(n => !Number.isFinite(n))) return null;
+  return parts.reduce((total, part) => total * 60 + part, 0);
+}
+
+function normalizeVideo(video) {
+  const durationSeconds =
+    parseDuration(video.duration?.seconds) ??
+    parseDuration(video.length_seconds) ??
+    parseDuration(video.duration?.text) ??
+    parseDuration(video.duration);
+  const thumbnails = video.thumbnails || [];
+  const thumb = [...thumbnails].reverse().find(t => Number(t?.width) > 0 && Number(t?.height) > 0);
+  const aspectRatio = thumb ? Number(thumb.width) / Number(thumb.height) : null;
+  const portraitHint = video.is_short === true || (aspectRatio !== null && aspectRatio < 0.9);
+  const durationLabel = video.duration?.text || (durationSeconds !== null
+    ? (durationSeconds >= 60 ? "1:00+" : "0:" + String(Math.floor(durationSeconds)).padStart(2, "0"))
+    : "");
+  return {
+    id: video.id,
+    title: video.title?.text || video.title?.toString?.() || "Untitled",
+    thumbnail: thumb?.url || video.thumbnails?.[0]?.url || "",
+    durationSeconds,
+    durationLabel,
+    portraitHint
+  };
+}
+
 app.get("/search", async (req, res) => {
   try {
     const query = req.query.q || "";
@@ -38,16 +72,7 @@ app.get("/search", async (req, res) => {
 
     const videos = (results.videos || [])
       .filter(v => v && v.id)
-      .map(v => ({
-        id: v.id,
-        title:
-          v.title?.text ||
-          v.title?.toString?.() ||
-          "Untitled",
-        thumbnail:
-          v.thumbnails?.[0]?.url ||
-          ""
-      }));
+      .map(normalizeVideo);
 
     res.json(videos);
 
@@ -56,6 +81,31 @@ app.get("/search", async (req, res) => {
     res.status(500).json({
       error: err.message || "Search failed"
     });
+  }
+});
+
+
+/**
+ * Dedicated Shorts discovery route.
+ * Only returns videos with a known duration of 60 seconds or less.
+ */
+app.get("/shorts", async (req, res) => {
+  try {
+    const query = String(req.query.q || "").trim();
+    if (!query) return res.json([]);
+
+    const yt = await getYT();
+    const results = await yt.search(query);
+    const shorts = (results.videos || [])
+      .filter(video => video && video.id)
+      .map(normalizeVideo)
+      .filter(video => Number.isFinite(video.durationSeconds) && video.durationSeconds > 0 && video.durationSeconds <= 60)
+      .sort((a, b) => Number(b.portraitHint) - Number(a.portraitHint));
+
+    res.json(shorts.slice(0, 24));
+  } catch (err) {
+    console.error("SHORTS ERROR:", err);
+    res.status(500).json({ error: err.message || "Shorts search failed" });
   }
 });
 
