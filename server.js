@@ -47,7 +47,7 @@ function normalizeVideo(video) {
   const aspectRatio = thumb ? Number(thumb.width) / Number(thumb.height) : null;
   const portraitHint = video.is_short === true || (aspectRatio !== null && aspectRatio < 0.9);
   const durationLabel = video.duration?.text || (durationSeconds !== null
-    ? (durationSeconds >= 60 ? "1:00+" : "0:" + String(Math.floor(durationSeconds)).padStart(2, "0"))
+    ? Math.floor(durationSeconds / 60) + ":" + String(Math.floor(durationSeconds % 60)).padStart(2, "0")
     : "");
   return {
     id: video.id,
