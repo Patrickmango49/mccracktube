@@ -30,7 +30,7 @@ function parseDuration(value) {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   const text = typeof value === "string" ? value : value?.text || value?.toString?.() || "";
   if (!text || text === "[object Object]") return null;
-  if (/^\\d+(?:\\.\\d+)?$/.test(text.trim())) return Number(text);
+  if (/^\d+(?:\.\d+)?$/.test(text.trim())) return Number(text);
   const parts = text.trim().split(":").map(Number);
   if (!parts.length || parts.length > 3 || parts.some(n => !Number.isFinite(n))) return null;
   return parts.reduce((total, part) => total * 60 + part, 0);
