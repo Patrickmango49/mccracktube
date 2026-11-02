@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="https://github.com/Patrickmango49/mccracktube/blob/main/favicon.png?raw=true" />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Patrickmango49/mccracktube/main/favicon.png" />
   <title>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube - Watch Videos</title>
   <meta name="description" content="𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube - Your dark-mode video destination." />
   <meta property="og:title" content="𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube" />
@@ -831,7 +831,7 @@
 <body>
   <header>
     <div class="header-inner">
-      <button class="logo" onclick="goHome()" aria-label="McCrackTube home"><img src="https://github.com/Patrickmango49/mccracktube/blob/main/favicon.png?raw=true" alt="" /><span>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube</span></button>
+      <button class="logo" onclick="goHome()" aria-label="McCrackTube home"><img src="https://raw.githubusercontent.com/Patrickmango49/mccracktube/main/favicon.png" alt="" /><span>𝕄𝕔ℂ𝕣𝕒𝕔𝕜Tube</span></button>
       <form class="search-form" id="searchForm" aria-label="Video search form">
         <input id="searchInput" class="search-input" type="text" placeholder="Search videos" autocomplete="off" aria-label="Search videos" />
         <button class="search-btn" type="submit" aria-label="Search">
@@ -1202,10 +1202,15 @@
         const queries=getNextShortQuerySet(3);
         const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchShortVideos(query)}}catch(error){return{query,videos:[]}}}));
         const mixed=[];responses.forEach(({query,videos})=>videos.forEach(video=>mixed.push({...video,sourceQuery:query})));
-        const candidates=shuffle(mixed).filter(video=>{
+        const eligible=mixed.filter(video=>{
           const duration=Number(video?.durationSeconds);
           return !!video&&!!video.id&&!shortsSeenIds.has(video.id)&&Number.isFinite(duration)&&duration>0&&duration<=60;
         });
+        // Prefer portrait-first discovery without excluding landscape Shorts when the pool is small.
+        const candidates=[
+          ...shuffle(eligible.filter(video=>video.portraitHint===true)),
+          ...shuffle(eligible.filter(video=>video.portraitHint!==true))
+        ];
         const unique=candidates.slice(0,batchTarget);
         unique.forEach(video=>shortsSeenIds.add(video.id));
         shortsFeed.querySelector(".shorts-empty")?.remove();unique.forEach(video=>shortsFeed.appendChild(createShortItem(video)));
