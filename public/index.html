@@ -1018,6 +1018,7 @@
     let shortsLoading = false;
     let shortsModeActive = false;
     let currentShortIndex = 0;
+    let pendingShortIndex = null;
     const shortsSeenIds = new Set();
 
     function showStatus(message, isError = false) {
@@ -1184,7 +1185,7 @@
     function showShort(index){
       const items=shortsFeed.querySelectorAll(".short-item");if(!items.length)return;
       if(index<0)index=0;
-      if(index>=items.length){loadMoreShorts(6,index);return;}
+      if(index>=items.length){if(shortsLoading){pendingShortIndex=index;return;}loadMoreShorts(6,index);return;}
       items.forEach(item=>item.classList.remove("active"));
       const active=items[index];active.classList.add("active");activateShortFrame(active);currentShortIndex=index;
       if(index >= items.length - 2 && !shortsLoading) loadMoreShorts(6);
@@ -1220,7 +1221,7 @@
         else if(!shortsFeed.querySelector(".short-item.active"))showShort(Math.min(currentShortIndex,count-1));
         if(!unique.length&&count){shortsLoader.textContent="You’re all caught up. Try again in a moment.";window.setTimeout(()=>shortsLoader.classList.add("hidden"),1800);}
       }catch(error){if(!shortsFeed.querySelector(".short-item"))showShortsEmptyState("Shorts could not load. Check your connection and try again.");}
-      finally{shortsLoading=false;if(!shortsLoader.textContent.startsWith("You’re all caught up"))shortsLoader.classList.add("hidden");}
+      finally{shortsLoading=false;if(!shortsLoader.textContent.startsWith("You’re all caught up"))shortsLoader.classList.add("hidden");if(pendingShortIndex!==null){const pending=pendingShortIndex;pendingShortIndex=null;const count=shortsFeed.querySelectorAll(".short-item").length;if(count)showShort(Math.min(pending,count-1));}}
     }
     async function enterShortsMode(){
       shortsModeActive=true;document.body.classList.add("shorts-active");hideStatus();playerSection.classList.add("hidden");playerFrame.src="";
