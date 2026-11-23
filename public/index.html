@@ -1092,14 +1092,37 @@ body[data-compact="true"] .video-grid{gap:22px 12px!important}body[data-hidehero
     }
 
     async function fetchShortVideos(query) {
-      const response = await fetch(`${API_BASE}/shorts?q=${encodeURIComponent(query)}`);
-      if (!response.ok) throw new Error("Shorts discovery request failed");
-      const videos = sanitizeVideos(await response.json());
-      return videos.filter(video =>
-        Number.isFinite(Number(video.durationSeconds)) &&
-        Number(video.durationSeconds) > 0 &&
-        Number(video.durationSeconds) <= 60
-      );
+      const urls = [
+        `${API_BASE}/shorts?q=${encodeURIComponent(query)}`,
+        `${API_BASE}/search?q=${encodeURIComponent(query)}`
+      ];
+      let lastError = null;
+      for (const url of urls) {
+        try {
+          const controller = new AbortController();
+          const timeout = window.setTimeout(() => controller.abort(), 45000);
+          let response;
+          try { response = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json" } }); }
+          finally { window.clearTimeout(timeout); }
+          if (!response.ok) throw new Error(`Video API returned ${response.status}`);
+          const raw = await response.json();
+          const videos = Array.isArray(raw) ? raw : (Array.isArray(raw.videos) ? raw.videos : []);
+          const normalized = videos.filter(video => video && video.id).map(video => ({
+            ...video,
+            title: video.title || "Untitled Short",
+            thumbnail: video.thumbnail || `https://i.ytimg.com/vi/${encodeURIComponent(video.id)}/hqdefault.jpg`,
+            durationSeconds: Number(video.durationSeconds ?? video.lengthSeconds ?? video.length_seconds)
+          }));
+          const shorts = normalized.filter(video =>
+            Number.isFinite(video.durationSeconds) &&
+            video.durationSeconds > 0 &&
+            video.durationSeconds <= 60
+          );
+          if (shorts.length) return sanitizeVideos(shorts);
+        } catch (error) { lastError = error; }
+      }
+      if (lastError) throw lastError;
+      return [];
     }
 
     function makeCard(video) {
@@ -1214,7 +1237,8 @@ body[data-compact="true"] .video-grid{gap:22px 12px!important}body[data-hidehero
       const item=document.createElement("article");item.className="short-item";
       const frame=document.createElement("iframe");frame.className="short-frame";frame.title=video.title||"Short video";
       frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";frame.allowFullscreen=true;frame.loading="lazy";
-      frame.dataset.baseSrc="https://www.youtube.com/embed/"+encodeURIComponent(video.id)+"?mute=1&controls=1&rel=0&playsinline=1";frame.src="about:blank";
+      frame.referrerPolicy="strict-origin-when-cross-origin";
+      frame.dataset.baseSrc="https://www.youtube.com/embed/"+encodeURIComponent(video.id)+"?mute=1&controls=1&rel=0&playsinline=1&enablejsapi=1&origin="+encodeURIComponent(location.origin);frame.src="about:blank";
       const overlay=document.createElement("div");overlay.className="short-overlay";
       const title=document.createElement("div");title.className="short-title";title.textContent=video.title||"Untitled video";
       const source=document.createElement("div");source.className="short-query";source.textContent=[video.durationLabel || (video.durationSeconds + "s"),video.portraitHint ? "Portrait" : "Short", "From: "+(video.sourceQuery||"discovery")].filter(Boolean).join(" · ");overlay.append(title,source);
@@ -1238,9 +1262,14 @@ body[data-compact="true"] .video-grid{gap:22px 12px!important}body[data-hidehero
     async function loadMoreShorts(batchTarget=8,navigateToIndex=null){
       if(shortsLoading)return;shortsLoading=true;shortsLoader.classList.remove("hidden");shortsLoader.textContent="Finding more Shorts…";
       try{
-        const queries=getNextShortQuerySet(3);
-        const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchShortVideos(query)}}catch(error){return{query,videos:[]}}}));
+        const queries=getNextShortQuerySet(4);
+        const responses=await Promise.all(queries.map(async query=>{try{return{query,videos:await fetchShortVideos(query),error:null}}catch(error){return{query,videos:[],error}}}));
         const mixed=[];responses.forEach(({query,videos})=>videos.forEach(video=>mixed.push({...video,sourceQuery:query})));
+        const failures=responses.filter(result=>result.error);
+        if(!mixed.length&&failures.length===responses.length){
+          const reason=failures[0].error?.name==="AbortError"?"The video service took too long to respond. Try again in a few seconds.":"The video service is unavailable right now. It may be starting up; try again shortly.";
+          throw new Error(reason);
+        }
         const eligible=mixed.filter(video=>{
           const duration=Number(video?.durationSeconds);
           return !!video&&!!video.id&&!shortsSeenIds.has(video.id)&&Number.isFinite(duration)&&duration>0&&duration<=60;
@@ -1254,11 +1283,11 @@ body[data-compact="true"] .video-grid{gap:22px 12px!important}body[data-hidehero
         unique.forEach(video=>shortsSeenIds.add(video.id));
         shortsFeed.querySelector(".shorts-empty")?.remove();unique.forEach(video=>shortsFeed.appendChild(createShortItem(video)));
         const count=shortsFeed.querySelectorAll(".short-item").length;
-        if(!count)showShortsEmptyState("The video source did not return Shorts this time. Check your connection and try again.");
+        if(!count)showShortsEmptyState("No Shorts were returned by the video service. Try again in a moment.");
         else if(navigateToIndex!==null&&navigateToIndex<count)showShort(navigateToIndex);
         else if(!shortsFeed.querySelector(".short-item.active"))showShort(Math.min(currentShortIndex,count-1));
         if(!unique.length&&count){shortsLoader.textContent="You’re all caught up. Try again in a moment.";window.setTimeout(()=>shortsLoader.classList.add("hidden"),1800);}
-      }catch(error){if(!shortsFeed.querySelector(".short-item"))showShortsEmptyState("Shorts could not load. Check your connection and try again.");}
+      }catch(error){if(!shortsFeed.querySelector(".short-item"))showShortsEmptyState(error?.message || "Shorts could not load. Check your connection and try again.");}
       finally{shortsLoading=false;if(!shortsLoader.textContent.startsWith("You’re all caught up"))shortsLoader.classList.add("hidden");if(pendingShortIndex!==null){const pending=pendingShortIndex;pendingShortIndex=null;const count=shortsFeed.querySelectorAll(".short-item").length;if(count)showShort(Math.min(pending,count-1));}}
     }
     async function enterShortsMode(){
